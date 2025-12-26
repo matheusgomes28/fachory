@@ -1,0 +1,14 @@
+build
+conan
+memes
+.vscode
+.cache
+compile_commands.json
+
+
+# Update random files
+**/*.jpeg
+**/*.jpg
+**/*.pdf
+**/*.ps
+**/*.raw
