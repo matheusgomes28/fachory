@@ -3,9 +3,14 @@ find_package(cxxopts REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Microsoft.GSL REQUIRED)
 
-add_executable(printer)
-target_sources(printer
-  PRIVATE main.cpp printer_manager.cpp
-  PUBLIC printer_manager.hpp)
+add_library(fachory_printer)
+target_sources(fachory_printer
+  PRIVATE printer_manager.cpp
+  PUBLIC include/printer/printer_manager.hpp)
 
-target_link_libraries(printer PRIVATE fmt::fmt spdlog::spdlog Microsoft.GSL::GSL cups)
+target_include_directories(fachory_printer PUBLIC include)
+
+target_link_libraries(fachory_printer PRIVATE fmt::fmt spdlog::spdlog Microsoft.GSL::GSL cups)
+
+add_library(fachory::printer ALIAS fachory_printer)
+

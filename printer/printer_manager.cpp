@@ -1,14 +1,14 @@
-#include "printer_manager.hpp"
+#include <printer/printer_manager.hpp>
 
-#include <cstdio>
+#include <cups/cups.h>
 #include <cups/http.h>
 #include <fmt/format.h>
 #include <gsl/assert>
 #include <iterator>
 #include <spdlog/spdlog.h>
 
-#include <cups/cups.h>
-
+#include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <memory>
@@ -82,6 +82,30 @@ namespace {
         }
 
         return true;
+    }
+
+    struct TempFile {
+        TempFile(std::string filename)
+            : filename{filename} {}
+
+        ~TempFile() {
+            std::filesystem::remove(filename);
+        }
+
+        std::string filename;
+    };
+
+    TempFile create_temp_file(std::string const& contents) {
+        namespace fs = std::filesystem;
+
+        fs::path temp_dir  = fs::temp_directory_path();
+        fs::path temp_file = temp_dir / (std::tmpnam(nullptr));
+
+        std::ofstream ofs(temp_file);
+        ofs << contents;
+        ofs.close();
+
+        return TempFile{temp_file};
     }
 } // namespace
 
@@ -286,75 +310,12 @@ bool PrinterManager::print_text(std::string const& printer_name, std::string con
 
     auto const file = create_temp_file(text);
 
-
-
-
-    const char* printer = nullptr;  // nullptr = default printer
-    const char* filename = "myfile.txt";
-    const char* title = "My Print Job";
-    
-    int job_id = cupsPrintFile(printer, filename, title, 0, nullptr);
-    
-    if (job_id == 0) {
-        std::cerr << "Error: " << cupsLastErrorString() << std::endl;
-        return 1;
-    }
-    
-    std::cout << "Print job submitted: " << job_id << std::endl;
-    return 0;
-
-
-
-
-
-    auto const maybe_printer = query_printer(printer_name);
-    if (!maybe_printer) {
-        return false;
-    }
-    auto [dest, info]  = *maybe_printer;
-    auto const options = make_default_options();
-
-    auto maybe_job = create_printer_job(printer_name, "My Job", options);
-    if (!maybe_job) {
-        spdlog::error("could not create job for printer {}: {}", printer_name, cupsLastErrorString());
-        return false;
-    }
-
-    reset_printer(dest, info, maybe_job->job_id, options);
-
-    auto const start_doc_res = cupsStartDestDocument(CUPS_HTTP_DEFAULT, dest, info, maybe_job->job_id, text.c_str(),
-        CUPS_FORMAT_AUTO, *options.second, options.first.get(), 1);
-
-
-    if (HTTP_STATUS_CONTINUE != start_doc_res) {
-        spdlog::error("unable to start the document for printer {}: {}", printer_name, cupsLastErrorString());
-        maybe_job->cancel();
-        return false;
-    }
-
-    bool write_error = false;
-
-    if (cupsWriteRequestData(CUPS_HTTP_DEFAULT, text.c_str(), text.size()) != HTTP_STATUS_CONTINUE) {
-        maybe_job->cancel();
+    if (print_file(printer_name, file.filename, CUPS_FORMAT_RAW)) {
+        spdlog::error("failed to print text");
         return false;
     }
 
     return true;
-
-
-    const char* printer = nullptr;  // nullptr = default printer
-    const char* filename = "myfile.txt";
-    const char* title = "My Print Job";
-    
-    int job_id = cupsPrintFile(printer, filename, title, 0, nullptr);
-    
-    if (job_id == 0) {
-        std::cerr << "Error: " << cupsLastErrorString() << std::endl;
-        return 1;
-    }
-    
-    std::cout << "Print job submitted: " << job_id << std::endl;
-    return 0;
 }
 
 

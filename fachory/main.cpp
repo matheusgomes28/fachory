@@ -1,4 +1,5 @@
-#include "printer_manager.hpp"
+#include <database/database.hpp>
+#include <printer/printer_manager.hpp>
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -7,6 +8,15 @@
 #include <iostream>
 
 int main(int arc, char** arv) {
+
+    // Create Database
+    try {
+        fachory::db::Database test{"test.db", "password"};
+    } catch (fachory::db::DatabaseException const& e) {
+        spdlog::error("could not connect to datbaase: {}", e.what());
+        return -1;
+    }
+
     PrinterManager manager{};
 
     for (auto const printer : manager.printers()) {
@@ -40,5 +50,5 @@ int main(int arc, char** arv) {
         return -1;
     }
 
-    return -1;
+    return 0;
 }

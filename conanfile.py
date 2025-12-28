@@ -12,4 +12,7 @@ class WavyTuneConan(ConanFile):
         self.requires("ms-gsl/4.1.0")
         self.requires("qt/6.5.3")
         self.requires("spdlog/1.15.3")
+        self.requires("sqlitecpp/3.3.3")
 
+    def configure(self):
+        self.options["sqlitecpp/*"].with_sqlcipher = True
