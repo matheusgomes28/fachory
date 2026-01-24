@@ -232,7 +232,7 @@ KeepEmptyLines:
   AtStartOfFile:   false
 # LambdaBodyIndentation: Signature
 # LineEnding:      DeriveLF
-LineEnding:      CRLF
+LineEnding:      LF
 # NOTE: MacroBlockBegin/MacroBlockEnd don't work with _CATCH_ALL.
 # MacroBlockBegin: ''
 # MacroBlockEnd:   ''
