@@ -18,7 +18,7 @@
 BasedOnStyle:  LLVM
 # AccessModifierOffset: -2
 AccessModifierOffset: -4
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: AlwaysBreak
 BracedInitializerIndentWidth: 1
 # AlignArrayOfStructures: None
 # AlignConsecutiveAssignments:
@@ -108,10 +108,11 @@ AllowShortFunctionsOnASingleLine: Empty
 # BinPackArguments: true
 # BinPackParameters: true
 # BitFieldColonSpacing: Both
-# BraceWrapping:
+BraceWrapping:
+  SplitEmptyRecord: true
+  AfterControlStatement: MultiLine
 #   AfterCaseLabel:  false
 #   AfterClass:      false
-#   AfterControlStatement: Never
 #   AfterEnum:       false
 #   AfterExternBlock: false
 #   AfterFunction:   false
@@ -125,7 +126,6 @@ AllowShortFunctionsOnASingleLine: Empty
 #   BeforeWhile:     false
 #   IndentBraces:    false
 #   SplitEmptyFunction: true
-#   SplitEmptyRecord: true
 #   SplitEmptyNamespace: true
 # BreakAdjacentStringLiterals: true
 # BreakAfterAttributes: Leave

@@ -53,7 +53,7 @@ namespace {
 
         auto const options_size = std::make_shared<int>(num_options);
         PrinterOptionBuffer options_buffer{
-         options, [&options_size](auto* ptr) { cupsFreeOptions(*options_size, ptr); }};
+         options, [options_size](auto* ptr) { cupsFreeOptions(*options_size, ptr); }};
 
         return {std::move(options_buffer), options_size};
     }
@@ -289,7 +289,7 @@ bool PrinterManager::print_file(
 }
 
 bool PrinterManager::print_pdf(std::string const& printer_name, std::string const& pdf_path) {
-    if (print_file(printer_name, pdf_path, CUPS_FORMAT_PDF)) {
+    if (!print_file(printer_name, pdf_path, CUPS_FORMAT_PDF)) {
         spdlog::error("failed to print pdf file {}", pdf_path);
         return false;
     }
@@ -298,7 +298,7 @@ bool PrinterManager::print_pdf(std::string const& printer_name, std::string cons
 }
 
 bool PrinterManager::print_jpeg(std::string const& printer_name, std::string const& image_path) {
-    if (print_file(printer_name, image_path, CUPS_FORMAT_JPEG)) {
+    if (!print_file(printer_name, image_path, CUPS_FORMAT_JPEG)) {
         spdlog::error("failed to print jpeg file {}", image_path);
         return false;
     }
@@ -310,7 +310,7 @@ bool PrinterManager::print_text(std::string const& printer_name, std::string con
 
     auto const file = create_temp_file(text);
 
-    if (print_file(printer_name, file.filename, CUPS_FORMAT_RAW)) {
+    if (!print_file(printer_name, file.filename, CUPS_FORMAT_TEXT)) {
         spdlog::error("failed to print text");
         return false;
     }
