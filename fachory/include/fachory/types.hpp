@@ -1,8 +1,8 @@
 #ifndef FACHORY_TYPES_H
 #define FACHORY_TYPES_H
 
-#include <variant>
 #include <string>
+#include <variant>
 
 namespace fachory::app {
 
@@ -20,6 +20,6 @@ namespace fachory::app {
 
 
     using PrintItem = std::variant<std::monostate, ImagePrint, PdfPrint, TextPrint>;
-}
+} // namespace fachory::app
 
 #endif // FACHORY_TYPES_H

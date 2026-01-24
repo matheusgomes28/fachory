@@ -52,8 +52,7 @@ namespace {
         num_options = cupsAddOption("orientation-requested", "3", num_options, &options);
 
         auto const options_size = std::make_shared<int>(num_options);
-        PrinterOptionBuffer options_buffer{
-         options, [options_size](auto* ptr) { cupsFreeOptions(*options_size, ptr); }};
+        PrinterOptionBuffer options_buffer{options, [options_size](auto* ptr) { cupsFreeOptions(*options_size, ptr); }};
 
         return {std::move(options_buffer), options_size};
     }
@@ -109,8 +108,9 @@ namespace {
     }
 } // namespace
 
-PrinterJob::PrinterJob(std::string const& printer_name, cups_dest_t* dest, cups_dinfo_t* info,
-    std::string const& job_name, PrinterOptions const& options)
+PrinterJob::PrinterJob(
+    std::string const& printer_name, cups_dest_t* dest, cups_dinfo_t* info, std::string const& job_name,
+    PrinterOptions const& options)
     : job_id{0}, printer_name{printer_name}, _cancelled(false), _cups_dest{dest}, _cups_info{info} {
 
 
@@ -184,10 +184,11 @@ void PrinterManager::add_printer(std::string const& name, cups_dest_t* dest) {
 
     _cups_dests_indices[name] = _cups_num_dests - 1;
 
-    _printer_details[name] = PrinterDetails{.name = dest->name,
-     .instance                                    = dest->instance != nullptr ? dest->instance : "",
-     .is_default                                  = static_cast<bool>(dest->is_default),
-     .options                                     = {}};
+    _printer_details[name] = PrinterDetails{
+     .name       = dest->name,
+     .instance   = dest->instance != nullptr ? dest->instance : "",
+     .is_default = static_cast<bool>(dest->is_default),
+     .options    = {}};
 }
 
 void PrinterManager::remove_printer(std::string const& name, cups_dest_t* dest) {
@@ -271,8 +272,9 @@ bool PrinterManager::print_file(
 
     reset_printer(dest, info, maybe_job->job_id, options);
 
-    auto const start_doc_res = cupsStartDestDocument(CUPS_HTTP_DEFAULT, dest, info, maybe_job->job_id,
-        file_path.c_str(), format.c_str(), *options.second, options.first.get(), 1);
+    auto const start_doc_res = cupsStartDestDocument(
+        CUPS_HTTP_DEFAULT, dest, info, maybe_job->job_id, file_path.c_str(), format.c_str(), *options.second,
+        options.first.get(), 1);
 
     if (HTTP_STATUS_CONTINUE != start_doc_res) {
         spdlog::error("unable to start the document for printer {}: {}", printer_name, cupsLastErrorString());

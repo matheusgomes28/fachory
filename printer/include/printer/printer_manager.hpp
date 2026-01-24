@@ -29,7 +29,8 @@ struct PrinterJob {
     int job_id;
     std::string printer_name;
 
-    PrinterJob(std::string const& printer_name, cups_dest_t* dest, cups_dinfo_t* info, std::string const& job_name,
+    PrinterJob(
+        std::string const& printer_name, cups_dest_t* dest, cups_dinfo_t* info, std::string const& job_name,
         PrinterOptions const& options);
     ~PrinterJob();
 
@@ -70,11 +71,11 @@ private:
 
     void poll_destinations();
     [[nodiscard]] std::optional<std::pair<cups_dest_t*, cups_dinfo_t*>> query_printer(std::string const& printer_name);
-    [[nodiscard]] std::optional<PrinterJob> create_printer_job(
-        std::string const& printer_name, std::string const& job_name, PrinterOptions const& options);
+    [[nodiscard]] std::optional<PrinterJob>
+        create_printer_job(std::string const& printer_name, std::string const& job_name, PrinterOptions const& options);
 
-    [[nodiscard]] bool print_file(
-        std::string const& printer_name, std::string const& file_path, std::string const& format);
+    [[nodiscard]] bool
+        print_file(std::string const& printer_name, std::string const& file_path, std::string const& format);
 };
 
 
